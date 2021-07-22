@@ -5,11 +5,11 @@ const view = (() => {
     formContainer.classList.toggle('show-form')
   }
 
-  const radioSelect = () => {
-    var radios = document.getElementsByName('symbol');
+  const radioSelect = (group, choice1, choice2) => {
+    var radios = document.getElementsByName(group);
     for (var i = 0; i < radios.length; i++) {
       if (radios[i].checked) {
-        read = radios[i].value == 'x' ? 'x' : 'o'
+        read = radios[i].value == choice1 ? choice1 : choice2
         return read
       }
     }
@@ -20,6 +20,7 @@ const view = (() => {
       tile.textContent = ''
       tile.classList.remove('winner')
       tile.classList.remove('taken')
+      secondHuman[0].classList.remove('show-input');
     })
   }
 
@@ -37,6 +38,8 @@ const game = (() => {
   let whosGo;
   let gameOver;
   let winningTiles;
+  let compMove;
+  let compTile;
 
   /*
   Turn starts
@@ -101,6 +104,16 @@ const game = (() => {
     whosGo = player
     console.log(`it is your turn ${player.username}`)
     _annouceTurn(player)
+    if (player.brain == 'ai') {
+      let compTileTaken = false
+      while(!compTileTaken) {
+        compMove = player.move()
+        compTile = document.getElementsByClassName(`tile-${ compMove + 1 }`)
+        console.log(compTile)
+        compTileTaken = compTile[0].classList[2] == 'taken' ? false : true
+      }
+      playerMoves(compMove, compTile[0])
+    }
   };
 
   return {initGame, turn, playerMoves}
@@ -112,10 +125,14 @@ const PlayerFactory = (username, symbol) => {
   return {username, symbol}
 }
 
-const ComputerFactory = (humanSymbol) => {
+const ComputerFactory = (symbol) => {
   const username = 'skynet';
-  const symbol = humanSymbol == 'x' ? 'o' : 'x';
-  return {username, symbol}
+  const brain = 'ai';
+
+  const move = () => {
+    return Math.floor(Math.random() * 9);
+  }
+  return {username, symbol, brain, move}
 }
 
 
@@ -126,8 +143,10 @@ const ComputerFactory = (humanSymbol) => {
 const newGameBtn = document.getElementById('new-game-btn')
 const formContainer = document.getElementById('form-container');
 const formClose = document.getElementById('close');
-const tiles = document.querySelectorAll('.tile')
-const turnTeller = document.getElementById('turn-teller')
+const tiles = document.querySelectorAll('.tile');
+const turnTeller = document.getElementById('turn-teller');
+const player2Choice = document.querySelectorAll('.player-2-choice');
+const secondHuman = document.getElementsByClassName('second-human');
 
 newGameBtn.addEventListener('click', (e) => {
   view.bringUpForm()
@@ -143,21 +162,45 @@ formContainer.addEventListener('click', (e)=> {
   }
 });
 
+player2Choice.forEach((btn) => {
+  btn.addEventListener('click', (e) => {
+  let isHuman = view.radioSelect('opponent', 'human', 'computer');
+  if (isHuman=='human') {
+    secondHuman[0].classList.add('show-input')
+  } else {
+    secondHuman[0].classList.remove('show-input')
+  }
+  })
+})
+
 form.addEventListener('submit', (e) => {
   e.preventDefault();
 
   const username = document.getElementById('username').value
-  let symbol = view.radioSelect()
+  let symbol = view.radioSelect('symbol', 'x', 'o');
+  let opponent = view.radioSelect('opponent', 'human', 'computer');
+  let human2Username = document.getElementById('human-2-username').value
+  let symbol2 = symbol == 'x' ? 'o' : 'x';
+  let player2;
 
   console.log(username)
   console.log(symbol)
+  console.log(opponent)
 
-  let player = PlayerFactory(username, symbol);
-  let comp = ComputerFactory(player.symbol);
+  let player = PlayerFactory(username, symbol)
+  if (opponent == 'computer') {
+    player2 = ComputerFactory(symbol2);
+  } else if (opponent = 'human') {
+    player2 = PlayerFactory(human2Username, symbol2);
+  } else {
+    console.log('error')
+  }
 
-  game.initGame(player, comp);
+  game.initGame(player, player2);
   form.reset();
 });
+
+
 
 tiles.forEach((tile) => {
   let tileNum = parseInt(tile.classList[1].match(/\d/))

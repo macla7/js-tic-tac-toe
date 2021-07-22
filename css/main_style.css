@@ -64,5 +64,11 @@
 #form .form-radio > * {
   padding: 0 0.5rem;
 }
+#form .second-human {
+  display: none;
+}
+#form .show-input {
+  display: block;
+}
 
 /*# sourceMappingURL=main_style.css.map */
