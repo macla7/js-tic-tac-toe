@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name='viewport' content='width=device-width, intial-scale=1.0'/>
+    <link rel='stylesheet' href='/css/main_style.css'>
+  </head>
+  <body>
+    <h1>Tic Tac Toe</h1>
+    <p><em>Or Noughts and Crosses for more sophisticated cultures..</em></p>
+
+    <button type='button' id='new-game-btn'>New Game</button><br /><br />
+
+    <section class='form-container' id='form-container'>
+      <form id='form'>
+        <div class="form-item">
+          <label for='username'>Your Name:</label>
+          <input type='text' name='username' id='username'>
+        </div>
+        <p>Your symbol:</p>
+        <div class="form-radio">
+          <label for='symbol'>x</label>
+          <input type='radio' name='symbol' value='x'>
+          <lavel for='symbol'>o</lavel>
+          <input type='radio' name='symbol' value='o'>
+        </div>
+        <div id='form-controls'>
+          <input type='submit' value='Start' id='submit'>
+          <button type='button' id='close'>Close</button>
+        </div>
+      </form>
+    </section>
+
+    <section class='board'>
+      <div class="tile tile-1">1</div>
+      <div class="tile tile-2">2</div>
+      <div class="tile tile-3">3</div>
+      <div class="tile tile-4">4</div>
+      <div class="tile tile-5">5</div>
+      <div class="tile tile-6">6</div>
+      <div class="tile tile-7">7</div>
+      <div class="tile tile-8">8</div>
+      <div class="tile tile-9">9</div>
+    </section>
+  </body>
+  <script src='/scripts.js'></script>
+</html>
