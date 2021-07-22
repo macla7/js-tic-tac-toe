@@ -40,6 +40,8 @@ const game = (() => {
   let winningTiles;
   let compMove;
   let compTile;
+  let compTileTaken;
+  let allTaken;
 
   /*
   Turn starts
@@ -97,23 +99,35 @@ const game = (() => {
   }
 
   const _winTask = () => {
+    setTimeout(function(){ 
+      alert("Clear Board?");
+      view.clearBoard();
+      console.log('game over')
+     }, 3000);
+  };
+
+  const _draw = () => {
+    alert("It's a draw!");
     view.clearBoard();
     console.log('game over')
-  };
+  }
 
   const turn = (player) => {
     whosGo = player
-    console.log(`it is your turn ${player.username}`)
     _annouceTurn(player)
+    allTaken = document.getElementsByClassName('taken').length
+
     if (player.brain == 'ai') {
-      let compTileTaken = false
-      while(!compTileTaken) {
+      compTileTaken = false
+      while(!compTileTaken && allTaken < 8) {
         compMove = player.move()
         compTile = document.getElementsByClassName(`tile-${ compMove + 1 }`)
         console.log(compTile)
         compTileTaken = compTile[0].classList[2] == 'taken' ? false : true
       }
-      playerMoves(compMove+1, compTile[0])
+      allTaken >= 9 ? _draw() : playerMoves(compMove+1, compTile[0])
+    } else {
+      if (allTaken == 9) { _draw() }
     }
   };
 
@@ -208,7 +222,6 @@ tiles.forEach((tile) => {
   tile.addEventListener('click', (e) => {
     console.log(tileNum)
     if (!view.taken(tileNum, tile)) {
-    console.log('hey')
     game.playerMoves(tileNum, tile)
     }
   })
