@@ -68,7 +68,7 @@
   display: none;
 }
 #form .show-input {
-  display: block;
+  display: grid;
 }
 
 /*# sourceMappingURL=main_style.css.map */

@@ -97,7 +97,8 @@ const game = (() => {
   }
 
   const _winTask = () => {
-    console.log('game over!')
+    view.clearBoard();
+    console.log('game over')
   };
 
   const turn = (player) => {
@@ -112,7 +113,7 @@ const game = (() => {
         console.log(compTile)
         compTileTaken = compTile[0].classList[2] == 'taken' ? false : true
       }
-      playerMoves(compMove, compTile[0])
+      playerMoves(compMove+1, compTile[0])
     }
   };
 
