@@ -15,12 +15,28 @@ const view = (() => {
     }
   }
 
-  return {bringUpForm, radioSelect}
+  const clearBoard = () => {
+    tiles.forEach((tile) => {
+      tile.textContent = ''
+      tile.classList.remove('winner')
+      tile.classList.remove('taken')
+    })
+  }
+
+  const taken = (tileNum, tile) => {
+    return tile.classList[2] == 'taken' ? true : false
+  }
+
+  return {bringUpForm, radioSelect, taken, clearBoard}
 })();
 
 const game = (() => {
-  let gameBoard = ['','','','','','','','',''];
-  let human = 'x';
+  let gameBoard;
+  let player1;
+  let player2;
+  let whosGo;
+  let gameOver;
+  let winningTiles;
 
   /*
   Turn starts
@@ -30,47 +46,88 @@ const game = (() => {
   End Turn
   */
 
-  const initGame = (username, symbol) => {
-    console.log(`Welcome to the game ${username}, your symbol is ${symbol}`)
+  const initGame = (playerOne, playerTwo) => {
+    view.clearBoard()
+    gameBoard = ['1','2','3','4','5','6','7','8','9'];
+    gameOver = false;
+    view.bringUpForm()
+    //alert(`Welcome to the game ${playerOne.username}, your symbol is ${playerOne.symbol}`);
+
+    player1 = playerOne
+    player2 = playerTwo
+
+    turn(player1);
   };
 
-  const annouceTurn = () => {
-
+  const _annouceTurn = (player) => {
+    turnTeller.textContent = `${player.username}'s turn`;
   };
 
-  const playerMoves = () => {
-
+  const playerMoves = (tileNum, tile) => {
+    tile.textContent = whosGo.symbol
+    gameBoard[tileNum-1] = whosGo.symbol
+    tile.classList.add('taken');
+    _checkWin();
   };
 
-  const checkWin = () => {
-
+  const _checkWin = () => {
+    console.log(gameBoard)
+    if (gameBoard[0] == gameBoard[1] && gameBoard[1] == gameBoard[2]) { _winTiles([0, 1, 2])}
+    if (gameBoard[3] == gameBoard[4] && gameBoard[4] == gameBoard[5]) { _winTiles([3, 4, 5])}
+    if (gameBoard[6] == gameBoard[7] && gameBoard[7] == gameBoard[8]) { _winTiles([6, 7, 8])}
+    if (gameBoard[0] == gameBoard[3] && gameBoard[3] == gameBoard[6]) { _winTiles([0, 3, 6])}
+    if (gameBoard[1] == gameBoard[4] && gameBoard[4] == gameBoard[7]) { _winTiles([1, 4, 7])}
+    if (gameBoard[2] == gameBoard[5] && gameBoard[5] == gameBoard[8]) { _winTiles([2, 5, 8])}
+    if (gameBoard[0] == gameBoard[4] && gameBoard[4] == gameBoard[8]) { _winTiles([0, 4, 8])}
+    if (gameBoard[2] == gameBoard[4] && gameBoard[4] == gameBoard[6]) { _winTiles([2, 4, 6])}
+    gameOver ? _winTask() : whosGo == player1 ? turn(player2) : turn(player1);
   };
 
-  const winTask = () => {
+  const _winTiles = (arr) => {
+    gameOver = true
+    let winner;
+    arr.forEach((i) => {
+      console.log(`tile-${ i + 1 }`)
+      winner = document.getElementsByClassName(`tile-${ i + 1 }`)
+      winner[0].classList.add('winner')
+    })
+  }
 
+  const _winTask = () => {
+    console.log('game over!')
   };
 
-  const turn = () => {
-
+  const turn = (player) => {
+    whosGo = player
+    console.log(`it is your turn ${player.username}`)
+    _annouceTurn(player)
   };
 
-  return {initGame, turn}
+  return {initGame, turn, playerMoves}
 })();
 
 
 
-const PlayerFactory = (name, symbol) => {
+const PlayerFactory = (username, symbol) => {
+  return {username, symbol}
+}
 
-  const pickTile = () => {
-
-  }
+const ComputerFactory = (humanSymbol) => {
+  const username = 'skynet';
+  const symbol = humanSymbol == 'x' ? 'o' : 'x';
+  return {username, symbol}
 }
 
 
+
+
 // Event Listener
+
 const newGameBtn = document.getElementById('new-game-btn')
 const formContainer = document.getElementById('form-container');
 const formClose = document.getElementById('close');
+const tiles = document.querySelectorAll('.tile')
+const turnTeller = document.getElementById('turn-teller')
 
 newGameBtn.addEventListener('click', (e) => {
   view.bringUpForm()
@@ -91,12 +148,27 @@ form.addEventListener('submit', (e) => {
 
   const username = document.getElementById('username').value
   let symbol = view.radioSelect()
+
   console.log(username)
   console.log(symbol)
 
-  game.initGame(username, symbol);
+  let player = PlayerFactory(username, symbol);
+  let comp = ComputerFactory(player.symbol);
+
+  game.initGame(player, comp);
   form.reset();
 });
+
+tiles.forEach((tile) => {
+  let tileNum = parseInt(tile.classList[1].match(/\d/))
+  tile.addEventListener('click', (e) => {
+    console.log(tileNum)
+    if (!view.taken(tileNum, tile)) {
+    console.log('hey')
+    game.playerMoves(tileNum, tile)
+    }
+  })
+})
 
 
 

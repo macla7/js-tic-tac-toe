@@ -15,6 +15,10 @@
 .board .tile:nth-child(odd) {
   background-color: rgba(127, 255, 190, 0.6);
 }
+.board .tile.winner {
+  background-color: rgba(145, 36, 255, 0.6);
+  color: white;
+}
 
 .form-container {
   display: none;
