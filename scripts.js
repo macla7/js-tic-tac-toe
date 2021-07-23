@@ -37,7 +37,6 @@ const game = (() => {
   let player2;
   let whosGo;
   let gameOver;
-  let winningTiles;
   let compMove;
   let compTile;
   let compTileTaken;
@@ -231,9 +230,3 @@ tiles.forEach((tile) => {
     }
   })
 })
-
-
-
-
-// The code to run game
-
