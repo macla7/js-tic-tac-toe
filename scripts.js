@@ -52,10 +52,8 @@ const game = (() => {
   */
 
   const initGame = (playerOne, playerTwo) => {
-    view.clearBoard()
-    gameBoard = ['1','2','3','4','5','6','7','8','9'];
-    gameOver = false;
-    view.bringUpForm()
+    _restartData();
+    view.bringUpForm();
     //alert(`Welcome to the game ${playerOne.username}, your symbol is ${playerOne.symbol}`);
 
     player1 = playerOne
@@ -88,6 +86,12 @@ const game = (() => {
     gameOver ? _winTask() : whosGo == player1 ? turn(player2) : turn(player1);
   };
 
+  const _restartData = () => {
+    view.clearBoard()
+    gameBoard = ['1','2','3','4','5','6','7','8','9']
+    gameOver = false;
+  }
+
   const _winTiles = (arr) => {
     gameOver = true
     let winner;
@@ -101,15 +105,16 @@ const game = (() => {
   const _winTask = () => {
     setTimeout(function(){ 
       alert("Clear Board?");
-      view.clearBoard();
-      console.log('game over')
+      _restartData();
      }, 3000);
   };
 
   const _draw = () => {
-    alert("It's a draw!");
-    view.clearBoard();
-    console.log('game over')
+    setTimeout(function(){ 
+      alert("It's a draw!");
+      _restartData();
+     }, 1000);
+
   }
 
   const turn = (player) => {
